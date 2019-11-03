@@ -10,6 +10,7 @@ RUN apt-get install -y zlib1g-dev
 RUN apt-get install -y libpcre3-dev
 RUN apt-get install -y unzip
 RUN apt-get install -y uuid-dev
+RUN apt-get install -y nano
 RUN curl https://raw.githubusercontent.com/pagespeed/ngx_pagespeed/master/scripts/build_ngx_pagespeed.sh --output build_ngx_pagespeed.sh
 RUN chmod +x build_ngx_pagespeed.sh
 RUN ./build_ngx_pagespeed.sh --nginx-version=latest
@@ -39,11 +40,19 @@ RUN echo "memory_limit = 2G\n" >> /etc/php/7.2/fpm/php.ini
 RUN echo "upload_max_filesize = 128M\n" >> /etc/php/7.2/fpm/php.ini
 RUN echo "post_max_size = 128M\n" >> /etc/php/7.2/fpm/php.ini
 RUN sed -i -e 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' /etc/php/7.2/fpm/php.ini
+ENV COMPOSER_ALLOW_SUPERUSER 1
+ENV COMPOSER_MEMORY_LIMIT -1
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN set -eux; \
+    composer global require "hirak/prestissimo:^0.3" --prefer-dist --no-progress --no-suggest --classmap-authoritative; \
+    composer clear-cache
+ENV PATH="${PATH}:/root/.composer/vendor/bin"
 RUN apt-get install -y supervisor
 ADD supervisord.conf /etc/supervisor/supervisord.conf
 RUN mkdir -p /run/php
 RUN mkdir -p /usr/local/nginx/conf.d
 RUN mkdir -p /var/cache/ngx_pagespeed
+RUN usermod -u 1000 www-data && usermod -G staff www-data
 RUN chown -R www-data:www-data /var/cache/ngx_pagespeed
 RUN chown -R www-data:www-data /var/www
 RUN chown -R www-data:www-data /run/php
