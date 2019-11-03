@@ -11,10 +11,12 @@ RUN apt-get install -y libpcre3-dev
 RUN apt-get install -y unzip
 RUN apt-get install -y uuid-dev
 RUN apt-get install -y nano
+RUN apt-get install -y imagemagick
+RUN apt-get install -y graphviz
 RUN curl https://raw.githubusercontent.com/pagespeed/ngx_pagespeed/master/scripts/build_ngx_pagespeed.sh --output build_ngx_pagespeed.sh
 RUN chmod +x build_ngx_pagespeed.sh
 RUN ./build_ngx_pagespeed.sh --nginx-version=latest
-RUN sed -i "18i include       /usr/local/nginx/conf.d/*.conf;\n" /usr/local/nginx/conf/nginx.conf
+RUN sed -i "18i include /usr/local/nginx/conf.d/*.conf;\n" /usr/local/nginx/conf/nginx.conf
 RUN echo "user www-data;" >> /usr/local/nginx/conf/nginx.conf
 RUN echo "daemon off;" >> /usr/local/nginx/conf/nginx.conf
 EXPOSE 80
