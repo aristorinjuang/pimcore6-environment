@@ -2,6 +2,7 @@ FROM ubuntu:18.04
 LABEL maintainer="Aristo Rinjuang <aristorinjuang@gmail.com>"
 RUN apt-get update
 RUN apt-get install -y sudo
+RUN apt-get install -y cron
 RUN apt-get install -y curl
 RUN apt-get install -y wget
 RUN apt-get install -y libssl-dev
